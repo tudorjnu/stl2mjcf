@@ -110,11 +110,30 @@ def parse_args():
         default=0.0001,
         help="Controls the adaptive sampling of the generated convex-hulls(range=0.0-0.01)",
     )
-    parser.add_argument("--compile", type=bool, default=False)
-    parser.add_argument("--verbose", type=bool, default=True)
-    parser.add_argument("--output", type=str, default="output/")
-    parser.add_argument("--decompose", type=bool, default=False)
-    parser.add_argument("--visualize", type=bool, default=False)
+    parser.add_argument(
+        "--compile",
+        type=bool,
+        default=False,
+        help="Testing if MuJoCo compilation is successfull",
+    )
+    parser.add_argument(
+        "--verbose", type=bool, default=True, help="Allow V-HACD output?"
+    )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="output/",
+        help="Output folder for the convex hulls and xml file",
+    )
+    parser.add_argument(
+        "--decompose", type=bool, default=False, help="Use convex decomposition?"
+    )
+    parser.add_argument(
+        "--visualize",
+        type=bool,
+        default=False,
+        help="Visualize the model in MuJoCo. Note: requires the visualize flag as well",
+    )
     return parser.parse_args()
 
 
