@@ -1,0 +1,15 @@
+resolution: 1_000_000
+maxhulls: 100_000
+concavity: 0.0025
+planeDownsampling: 4
+convexhullDownsampling: 4
+alpha: 0.05
+beta: 0.05
+gamma: 0.00125
+delta: 0.05
+maxNumVerticesPerCH: 64
+minVolumePerCH: 0.0001
+
+
+
+
