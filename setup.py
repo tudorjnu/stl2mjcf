@@ -19,6 +19,7 @@ setup(
         "trimesh",
         "rtree",
         "lxml",
+        "mergedeep",
     ],
     entry_points={
         "console_scripts": [

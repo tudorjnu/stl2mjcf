@@ -6,7 +6,7 @@ import shutil
 from trimesh.decomposition import convex_decomposition
 from pathlib import Path
 from mujoco import viewer
-import pyaml
+import yaml
 import os
 
 
@@ -32,11 +32,18 @@ if VHACD_EXECUTABLE is None:
     install_vhacd()
 
 
+def load_config(path: Path) -> dict:
+    with open(path, "r") as file:
+        config = yaml.safe_load(file)
+    return config
+
+
 def parse_args():
     import argparse
 
     parser = argparse.ArgumentParser(description="Convert STL to MJCF")
     parser.add_argument(
+        "-f",
         "--folder",
         type=str,
         default="meshes/",
@@ -44,12 +51,14 @@ def parse_args():
         help="Folder with STL files",
     )
     parser.add_argument(
+        "-r",
         "--resolution",
         type=int,
         default=1_000_000,
         help="Maximum number of voxels generated during the voxelization stage(range=10, 000-16, 000, 000)",
     )
     parser.add_argument(
+        "-mh",
         "--maxhulls",
         type=int,
         help="Maximum number of convex hulls to produce",
@@ -61,32 +70,42 @@ def parse_args():
         help="Maximum allowed concavity(range=0.0-1.0)",
         default=0.0025,
     )
-    parser.add_argument("--regex", type=str, default=".stl")
     parser.add_argument(
+        "--regex",
+        type=str,
+        default=".stl",
+        help="Select which STL to decompose based on REGEX",
+    )
+    parser.add_argument(
+        "-pd",
         "--planeDownsampling",
         type=int,
         default=4,
         help='Controls the granularity of the search for the "best" clipping plane(range=1-16)',
     )
     parser.add_argument(
+        "-cd",
         "--convexhullDownsampling",
         type=int,
         default=4,
         help="Controls the precision of the convex-hull generation process during the clipping plane selection stage(range=1-16)",
     )
     parser.add_argument(
+        "-a",
         "--alpha",
         type=float,
         default=0.05,
         help="Controls the bias toward clipping along symmetry planes(range=0.0-1.0)",
     )
     parser.add_argument(
+        "-b",
         "--beta",
         type=float,
         default=0.05,
         help="Controls the bias toward clipping along revolution axes(range=0.0-1.0)",
     )
     parser.add_argument(
+        "-g",
         "--gamma",
         type=float,
         default=0.00125,
@@ -99,38 +118,51 @@ def parse_args():
         help="Controls the bias toward maximaxing local concavity(range=0.0-1.0)",
     )
     parser.add_argument(
+        "-mnv",
         "--maxNumVerticesPerCH",
         type=int,
         default=64,
         help="Controls the maximum number of triangles per convex-hull(range=4-1024)",
     )
     parser.add_argument(
+        "-mv",
         "--minVolumePerCH",
         type=float,
         default=0.0001,
         help="Controls the adaptive sampling of the generated convex-hulls(range=0.0-0.01)",
     )
     parser.add_argument(
+        "-c",
         "--compile",
-        type=bool,
+        action="store_true",
         default=False,
         help="Testing if MuJoCo compilation is successfull",
     )
     parser.add_argument(
-        "--verbose", type=bool, default=True, help="Allow V-HACD output?"
+        "-v",
+        "--verbose",
+        action="store_true",
+        default=True,
+        help="Allow V-HACD output?",
     )
     parser.add_argument(
+        "-o",
         "--output",
         type=str,
         default="output/",
         help="Output folder for the convex hulls and xml file",
     )
     parser.add_argument(
-        "--decompose", type=bool, default=False, help="Use convex decomposition?"
+        "-d",
+        "--decompose",
+        action="store_true",
+        default=False,
+        help="Use convex decomposition?",
     )
     parser.add_argument(
+        "-vm",
         "--visualize",
-        type=bool,
+        action="store_true",
         default=False,
         help="Visualize the model in MuJoCo. Note: requires the visualize flag as well",
     )
@@ -311,4 +343,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+    path = Path(__file__).parent / "config.yaml"
+    config = load_config(path.as_posix())
